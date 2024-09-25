@@ -1,0 +1,47 @@
+header h1 {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 2rem;
+  color: darkblue;
+}
+
+.festival-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  padding: 40px;
+  justify-content: center;
+  align-items: center;
+}
+
+.festival {
+  background: white;
+  padding: 15px;
+  text-align: center;
+  font-size: 1.3rem;
+  border-radius: 10px;
+  transition: transform 0.3s ease-in-out, background 0.3s;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.festival:hover {
+  transform: scale(1.05);
+  background: lightblue;
+}
+
+#backButton {
+  display: block;
+  margin: 30px auto;
+  padding: 10px 20px;
+  background-color: darkblue;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#backButton:hover {
+  background-color: lightblue;
+  color: darkblue;
+}

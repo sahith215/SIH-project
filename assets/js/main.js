@@ -53,6 +53,7 @@
   });
 
   /* Quiz ssection starts here */
+
   const questions = [
     {
       question: "Which is the classical dance form of Kerala?",
@@ -80,6 +81,41 @@
       options: { A: "Lion", B: "Elephant", C: "Tiger", D: "Peacock" },
       correct: "C",
     },
+    {
+      question: "Which is the capital of India?",
+      options: { A: "Mumbai", B: "Delhi", C: "Chennai", D: "Kolkata" },
+      correct: "B",
+    },
+    {
+      question: "What is the national flower of India?",
+      options: { A: "Lotus", B: "Rose", C: "Sunflower", D: "Marigold" },
+      correct: "A",
+    },
+    {
+      question: "Which state is known as the 'Land of Rising Sun'?",
+      options: {
+        A: "Arunachal Pradesh",
+        B: "Assam",
+        C: "Manipur",
+        D: "Mizoram",
+      },
+      correct: "A",
+    },
+    {
+      question: "Which river is the longest in India?",
+      options: { A: "Ganga", B: "Yamuna", C: "Brahmaputra", D: "Godavari" },
+      correct: "A",
+    },
+    {
+      question: "Who is known as the 'Iron Man of India'?",
+      options: {
+        A: "Mahatma Gandhi",
+        B: "Subhas Chandra Bose",
+        C: "Sardar Patel",
+        D: "Jawaharlal Nehru",
+      },
+      correct: "C",
+    },
   ];
 
   let currentQuestion = 0;
@@ -88,61 +124,96 @@
   function loadQuestion() {
     const questionEl = document.getElementById("question");
     const optionsEl = document.getElementById("options");
+    const feedbackEl = document.getElementById("feedback");
     const nextBtn = document.getElementById("nextBtn");
+    const prevBtn = document.getElementById("prevBtn");
 
     questionEl.innerText = questions[currentQuestion].question;
 
-    optionsEl.innerHTML = "";
-    for (const [key, value] of Object.entries(
-      questions[currentQuestion].options
-    )) {
-      const button = document.createElement("button");
-      button.classList.add("option");
-      button.innerText = value;
-      button.setAttribute("onclick", `checkAnswer(this, '${key}')`);
-      optionsEl.appendChild(button);
-    }
+    optionsEl.innerHTML = questions[currentQuestion].options
+      ? Object.entries(questions[currentQuestion].options)
+          .map(
+            ([key, value]) =>
+              `<button class="option" data-answer="${key}">${value}</button>`
+          )
+          .join("")
+      : "";
 
-    nextBtn.style.display = "none";
+    feedbackEl.innerText = "";
+    nextBtn.disabled = true;
+    prevBtn.disabled = currentQuestion === 0;
+
+    // Reattach event listeners
+    document.querySelectorAll(".option").forEach((button) => {
+      button.addEventListener("click", () => checkAnswer(button));
+    });
   }
 
-  function checkAnswer(button, answer) {
+  function checkAnswer(button) {
     const correctAnswer = questions[currentQuestion].correct;
     const nextBtn = document.getElementById("nextBtn");
+    const feedbackEl = document.getElementById("feedback");
+    const selectedAnswer = button.getAttribute("data-answer");
 
-    if (answer === correctAnswer) {
+    if (selectedAnswer === correctAnswer) {
       button.classList.add("correct");
+      feedbackEl.innerText = "Correct Answer!";
       score++;
     } else {
       button.classList.add("wrong");
       document
-        .querySelector(`.option[onclick*="${correctAnswer}"]`)
+        .querySelector(`.option[data-answer="${correctAnswer}"]`)
         .classList.add("correct");
+      feedbackEl.innerText = "Wrong Answer!";
     }
 
-    nextBtn.style.display = "block";
+    document
+      .querySelectorAll(".option")
+      .forEach((option) => (option.disabled = true));
+    nextBtn.disabled = false;
   }
 
   function nextQuestion() {
-    currentQuestion++;
-    if (currentQuestion < questions.length) {
+    if (currentQuestion < questions.length - 1) {
+      currentQuestion++;
       loadQuestion();
     } else {
       displayScore();
     }
   }
 
+  function prevQuestion() {
+    if (currentQuestion > 0) {
+      currentQuestion--;
+      loadQuestion();
+    }
+  }
+
   function displayScore() {
     const quizContainer = document.getElementById("quiz-container");
     const scoreContainer = document.getElementById("score-container");
+    const finalScore = document.getElementById("final-score");
+    const retakeQuizBtn = document.getElementById("retakeQuizBtn");
 
     quizContainer.style.display = "none";
     scoreContainer.style.display = "block";
-    scoreContainer.innerText = `Your Score: ${score} / ${questions.length}`;
+    finalScore.innerText = `${score} / ${questions.length}`;
+    retakeQuizBtn.addEventListener("click", retakeQuiz);
+  }
+
+  function retakeQuiz() {
+    currentQuestion = 0;
+    score = 0;
+    document.getElementById("score-container").style.display = "none";
+    document.getElementById("quiz-container").style.display = "block";
+    loadQuestion();
   }
 
   // Initialize the first question
   loadQuestion();
+
+  document.getElementById("nextBtn").addEventListener("click", nextQuestion);
+  document.getElementById("prevBtn").addEventListener("click", prevQuestion);
 
   /* Quiz section Ends here */
 
